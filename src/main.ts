@@ -2,6 +2,7 @@ import { config } from 'dotenv';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import swaggerConfig from 'src/config/swagger';
 
 async function bootstrap() {
   const port = process.env.PORT || 3000;
@@ -11,8 +12,10 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
 
+  swaggerConfig(app);
+
   await app.listen(port, () => {
-    Logger.log(`Server running on the port: ${process.env.PORT}/ - Ambiente: ${process.env.NODE_ENV} 😃`);
+    Logger.log(`Server running on the port: ${process.env.PORT}/ - Ambiente: ${process.env.ENVIRONMENT} 😃`);
   });
 }
 

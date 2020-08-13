@@ -24,9 +24,9 @@ export class PersonService{
       }
     }
 
-    async findOne(): Promise<IResponse> {
+    async findOne(id: number): Promise<IResponse> {
       try {
-        const person = await this._personRepository.findOne();
+        const person = await this._personRepository.findOne(id);
 
         return new SuccessResponse({ data: person }, HttpStatus.OK);
       } catch(error) {

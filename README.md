@@ -46,13 +46,6 @@ $ docker run --name simpleapi -e POSTGRES_PASSWORD=%V1n8u&% -p 3733:5432-d postg
 # development
 $ npm run start
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
 ## Test
 
 ```bash

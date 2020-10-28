@@ -1,10 +1,49 @@
-import { Module } from '@nestjs/common';
+import 'winston-daily-rotate-file';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { Person } from './modules/person/person.entity';
+import { PersonModule } from './modules/person/person.module';
+import * as morgan from 'morgan';
+import { Role } from './modules/role/role.entity';
+import { RoleModule } from './modules/role/role.module';
 
 @Module({
-  imports: [],
+  imports: [
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USER,
+      password: process.env.DB_PASS,
+      database: process.env.DB_DATABASE_NAME,
+      entities: [
+        Person,
+        Role,
+      ],
+      synchronize: true,
+      migrations: ['/src/config/migrations/*.ts'],
+      cli: {
+        migrationsDir: '/src/config/migrations',
+      },
+      extra: {
+        timezone: 'utc',
+      },
+    }),
+    PersonModule,
+    RoleModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(morgan(''))
+      .forRoutes('*');
+  }
+}

@@ -1,6 +1,7 @@
 import { isString } from "util";
 
-import { IsString, IsEnum, IsEmail, MaxLength, IsNumber, IsBoolean } from 'class-validator';
+import { IsString, IsEnum, IsEmail, MaxLength, IsNumber, IsBoolean, IsObject } from 'class-validator';
+import { Role } from "../role/role.entity";
 
 export class PersonDto {
 
@@ -17,4 +18,7 @@ export class PersonDto {
 
   @IsString()
   telephone: string;
+
+  @IsNumber()
+  role: number;
 }

@@ -7,6 +7,8 @@ import { AppService } from './app.service';
 import { Person } from './modules/person/person.entity';
 import { PersonModule } from './modules/person/person.module';
 import * as morgan from 'morgan';
+import { Role } from './modules/role/role.entity';
+import { RoleModule } from './modules/role/role.module';
 
 @Module({
   imports: [
@@ -20,6 +22,7 @@ import * as morgan from 'morgan';
       database: process.env.DB_DATABASE_NAME,
       entities: [
         Person,
+        Role,
       ],
       synchronize: true,
       migrations: ['/src/config/migrations/*.ts'],
@@ -31,6 +34,7 @@ import * as morgan from 'morgan';
       },
     }),
     PersonModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

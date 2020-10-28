@@ -1,51 +1,34 @@
-import { Injectable, HttpStatus } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Person } from "./person.entity";
-import { Repository, createQueryBuilder, getRepository } from "typeorm";
-import { IResponse } from "src/shared/interfaces/interface.response";
-import { SuccessResponse } from "src/shared/responses/sucess.response";
-import { ErrorResponse } from "src/shared/responses/error.response";
+import { Repository } from "typeorm";
 import { PersonDto } from "./person.dto";
-
+import { Role } from "../role/role.entity";
 @Injectable()
-export class PersonService{
+export class PersonService {
   constructor(
     @InjectRepository(Person)
-    private readonly _personRepository: Repository<Person>,
-  ) { }
+    protected readonly _personRepository: Repository<Person>,
+    @InjectRepository(Role)
+    protected readonly _roleRepository: Repository<Role>,
+  ) {}
 
-    async findAll(): Promise<IResponse> {
-      try {
-        const persons = await this._personRepository.find();
+  async findOne(object: any) {
+    return await this._personRepository.findOne(object);
+  }
 
-        return new SuccessResponse({ data: persons }, HttpStatus.OK);
-      } catch(error) {
-        throw new ErrorResponse({ message: error.message }, HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-    }
+  async create(body: PersonDto) {
+    const newPerson = new Person();
+    newPerson.name = body.name;
+    newPerson.personType = body.personType;
+    newPerson.telephone = body.telephone;
+    newPerson.email = body.email;
+    newPerson.role = await this._roleRepository.findOne(body.role);
+    return await this._personRepository.save(newPerson);
+  }
 
-    async findOne(id: number): Promise<IResponse> {
-      try {
-        const person = await this._personRepository.findOne(id);
-
-        return new SuccessResponse({ data: person }, HttpStatus.OK);
-      } catch(error) {
-        throw new ErrorResponse({ message: error.message }, HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-    }
-
-    async create(data: PersonDto): Promise<IResponse> {
-      try {
-        const newPerson = new Person(data);
-        console.log(data);
-        console.log(newPerson);
-
-        await this._personRepository.save(newPerson);
-
-        return new SuccessResponse({ data: 'Criado com sucesso' }, HttpStatus.CREATED);
-      } catch(error) {
-        throw new ErrorResponse({ message: error.message }, HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-    }
+  async find() {
+    return await this._personRepository.find();
+  }
 
 }
